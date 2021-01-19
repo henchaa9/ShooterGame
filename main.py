@@ -31,16 +31,20 @@ def draw(*args):
 def move_player(keys_pressed, player):
 
     if keys_pressed[pygame.K_w]:
-        player.y -= player_speed
+        if player.y > 1:
+            player.y -= player_speed
 
     if keys_pressed[pygame.K_s]:
-        player.y += player_speed
+        if player.y < height - 11:
+            player.y += player_speed
 
     if keys_pressed[pygame.K_a]:
-        player.x -= player_speed
+        if player.x > 3:
+            player.x -= player_speed
 
     if keys_pressed[pygame.K_d]:
-        player.x += player_speed
+        if player.x < width - 11:
+            player.x += player_speed
     
 
 def enemy_attack(player, enemy):
@@ -87,8 +91,8 @@ def shoot(bullets):
 fps = 60
 clock = pygame.time.Clock()
 
-player = pygame.Rect(30, 40, 10, 10)
-enemy = pygame.Rect(300, 300, 10, 10)
+player = pygame.Rect(30, 40, 20, 20)
+enemy = pygame.Rect(300, 300, 20, 20)
 
 bullets = []
 bullet_pos = []
