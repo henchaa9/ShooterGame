@@ -89,16 +89,18 @@ def shoot(bullets):
 
     for bullet in bullets:
 
-        if bullet.x < 800 and bullet.x > 0 and bullet.y < 600 and bullet.y > 0:
+        if bullet.x < width and bullet.x > 0 and bullet.y < height and bullet.y > 0:
             bullet.pos += bullet.dir * bullet.vel
             bullet.x, bullet.y = (round(bullet.pos.x), round(bullet.pos.y))
         else:
             pygame.event.post(pygame.event.Event(REMOVEBULLET))
+            bullets.remove(bullet)
             
         for enemy in enemies:
 
             if enemy.colliderect(bullet):
                 pygame.event.post(pygame.event.Event(REMOVEBULLET))
+                bullets.remove(bullet)
                 enemies.remove(enemy)
 
                 
@@ -130,9 +132,6 @@ while True:
             
         if event.type == SPAWNENEMY:
             spawn_enemy()
-        
-        if event.type == REMOVEBULLET:
-            bullets.pop(-1)
 
     keys_pressed = pygame.key.get_pressed() 
 
