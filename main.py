@@ -4,13 +4,20 @@ pygame.init()
 
 # MAIN WINDOW
 WIDTH, HEIGHT = 800, 600
-win = pygame.display.set_mode((WIDTH, HEIGHT))
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 # COLORS
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
+
+# FONTS
+FONT_1 = pygame.font.SysFont('caladea', 20)
+
+# TEXT
+t1_l1 = "In this game, you are a light orb. Unfortuantely, you have become depressed, as seen by the dark rash on your side."
+t1_l2 = "The only way you can become happy, is by finding yourself in the dark parts of your own mind."
 
 # MOVEMENT VALUES
 PLAYER_SPEED = 3
@@ -20,6 +27,12 @@ BULLET_SPEED = 4
 # USER EVENTS
 REMOVEBULLET = pygame.USEREVENT + 0
 SPAWNENEMY = pygame.USEREVENT + 1
+CHANGEBG = pygame.USEREVENT + 2
+
+# PLAYER
+player_image = pygame.image.load('player1.png')
+player = pygame.Rect(30, 40, 55, 55)
+
 
 # PLAYER MOVEMENT
 def player_movement():
@@ -58,6 +71,7 @@ class Scenes():
         self.scene = 'scene_1'
         self.bullets = []
         self.enemies = []
+        self.bg = pygame.image.load('1.png')
 
 
     def scene_manager(self):
@@ -67,8 +81,57 @@ class Scenes():
         elif self.scene == 'scene_2':
             self.scene_2()
 
+        elif self.scene == 'scene_3':
+            self.scene_3()
 
-    def scene_1(self):      
+    def scene_1(self):
+        # EVENTS
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+            # CHECKS FOR SCENE SWITCH
+            if keys_pressed[pygame.K_SPACE]:
+                self.scene = 'scene_2'
+
+        # PLAYER MOVEMENT
+        player_movement()
+
+        # DRAWING TO SCREEN
+        WIN.blit(self.bg, (0, 0))
+            
+        text1 = FONT_1.render(t1_l1, 1, WHITE)
+        WIN.blit(text1, (50, 100))
+        
+        text2 = FONT_1.render(t1_l2, 1, WHITE)
+        WIN.blit(text2, (100, 150))
+
+        pygame.display.update()
+
+
+    def scene_2(self):
+        # EVENTS
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+        # CHECKS FOR SCENE SWITCH
+        if keys_pressed[pygame.K_d] and player.x == 777:
+            player.x = 6
+            self.scene = 'scene_3'
+
+        # PLAYER MOVEMENT
+        player_movement()
+
+        # DRAWING TO SCREEN
+        WIN.blit(self.bg, (0, 0))
+
+        WIN.blit(player_image, (player.x - 7, player.y - 7))
+        
+        pygame.display.update()
+
+
+    def scene_3(self):
         # EVENTS
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -76,7 +139,7 @@ class Scenes():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = pygame.mouse.get_pos()
-                self.bullets.append(Bullet(player.x, player.y, 10, 10, (mx, my)))
+                self.bullets.append(Bullet(player.x + player.width / 2, player.y + player.height / 2, 10, 10, (mx, my)))
                 
             if event.type == SPAWNENEMY:
                 enemy = pygame.Rect(random.randint(1, 800), random.randint(1, 600), 20, 20)
@@ -86,20 +149,20 @@ class Scenes():
         player_movement()
 
         # CHECKS FOR SCENE SWITCH
-        if keys_pressed[pygame.K_d] and player.x == 777:
-            player.x = 6
+        if keys_pressed[pygame.K_a] and player.x == 6:
+            player.x = 777
             self.scene = 'scene_2'
 
         # DRAWING TO SCREEN
-        win.fill(WHITE)
+        WIN.blit(self.bg, (0, 0))
 
-        pygame.draw.rect(win, GREEN, player)
-        
+        WIN.blit(player_image, (player.x - 5, player.y - 3))
+
         for enemy in self.enemies:
-            pygame.draw.rect(win, RED, enemy)
+            pygame.draw.rect(WIN, RED, enemy)
 
         for bullet in self.bullets:
-            pygame.draw.rect(win, YELLOW, bullet)
+            pygame.draw.rect(WIN, YELLOW, bullet)
 
         pygame.display.update()
         
@@ -135,33 +198,6 @@ class Scenes():
                     self.bullets.remove(bullet)
                     self.enemies.remove(enemy)
 
-
-    def scene_2(self):
-        # EVENTS
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
-
-        # CHECKS FOR SCENE SWITCH
-        if keys_pressed[pygame.K_a] and player.x == 3:
-            player.x = 777
-            self.scene = 'scene_1'
-            self.bullets = []
-            self.enemies = []
-
-        # PLAYER MOVEMENT
-        player_movement()
-
-        # DRAWING TO SCREEN
-        win.fill(WHITE)
-
-        pygame.draw.rect(win, GREEN, player)
-
-        pygame.display.update()
-
-
-# PLAYER
-player = pygame.Rect(30, 40, 20, 20)
 
 # SCENE INSTANCE
 current_scene = Scenes()
